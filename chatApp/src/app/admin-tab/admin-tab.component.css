@@ -1,0 +1,31 @@
+/* Admin tab layout with grid */
+.admin-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.admin-section {
+  background-color: hwb(0 29% 71%);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 2px 4px 6px rgba(0,0,0,0.1);
+}
+
+.admin-section h2 {
+  color: #ff5722;
+}
+
+button {
+  background-color: #8708a7;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #00796b;
+}
