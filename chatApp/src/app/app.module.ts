@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { AdminTabComponent } from './admin-tab/admin-tab.component';  
 import { NavigationComponent } from './navigation/navigation.component';  
@@ -15,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { GroupChatComponent } from './group-chat/group-chat.component';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -27,17 +27,18 @@ import { GroupChatComponent } from './group-chat/group-chat.component';
     ProfileComponent
   ],
   imports: [
-    BrowserAnimationsModule,  
-    MatSidenavModule,  
-    MatListModule,     
-    MatIconModule,     
-    MatToolbarModule,  
-    BrowserModule,     
-    AppRoutingModule,  
-    FormsModule,       
-    HttpClientModule   
+    BrowserAnimationsModule,
+    MatSidenavModule,
+    MatListModule,
+    MatIconModule,
+    MatToolbarModule,
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule
   ],
-  providers: [],  
+  providers: [
+    provideHttpClient(withFetch())  // Enable fetch API
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,11 +1,49 @@
-<div class="admin-container">
-  <h1><i class="fas fa-user-shield"></i> Admin Tab</h1>
-  <div class="admin-section">
-    <h2>Manage Users</h2>
-    <button class="btn btn-primary"><i class="fas fa-users-cog"></i> Manage</button>
-  </div>
-  <div class="admin-section">
-    <h2>Manage Groups</h2>
-    <button class="btn btn-success"><i class="fas fa-users"></i> Groups</button>
+<div class="container">
+  <header>
+    <h1>Admin Tab</h1>
+    <nav>
+      <span class="nav-link" (click)="viewUserRequests()">User Requests</span>
+      <span class="nav-link" (click)="viewGroupRequests()">Group Requests</span>
+    </nav>
+  </header>
+
+  <div class="requests">
+    <div class="user-requests" *ngIf="showUserRequests">
+      <h3>User Requests</h3>
+      <div class="requests-grid">
+        <div class="header-row">
+          <div>User Name</div>
+          <div>Email</div>
+          <div>Actions</div>
+        </div>
+        <div *ngFor="let request of userRequests" class="request-row">
+          <div>{{ request.username }}</div>
+          <div>{{ request.email }}</div>
+          <div>
+            <button class="approve" (click)="approveUser(request)">Approve</button>
+            <button class="reject" (click)="rejectUser(request)">Reject</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="group-requests" *ngIf="showGroupRequests">
+      <h3>Group Requests</h3>
+      <div class="requests-grid">
+        <div class="header-row">
+          <div>Group Name</div>
+          <div>Creator</div>
+          <div>Actions</div>
+        </div>
+        <div *ngFor="let group of groupRequests" class="request-row">
+          <div>{{ group.name }}</div>
+          <div>{{ group.creator }}</div>
+          <div>
+            <button class="approve" (click)="approveGroup(group)">Approve</button>
+            <button class="reject" (click)="rejectGroup(group)">Reject</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

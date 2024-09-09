@@ -1,52 +1,29 @@
 import { Component } from '@angular/core';
-import { UserService } from '../services/user.service';
 import { Router } from '@angular/router';
+import { UserService } from '../services/user.service'; // Assuming you have UserService
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  loginUsername: string = '';
-  loginPassword: string = '';
-  signupUsername: string = '';
-  signupEmail: string = '';
-  signupPassword: string = '';
+  username: string = '';
+  password: string = '';
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(private router: Router, private userService: UserService) {}
 
-  login() {
-    this.userService.login({
-      username: this.loginUsername,
-      password: this.loginPassword,
-    }).subscribe((response: any) => {
-      if (response) {
-        this.router.navigate(['/dashboard']);
-      } else {
-        alert('Invalid credentials');
-      }
-    }, error => {
-      console.error('Login failed', error);
-      alert('Login failed. Please check your credentials.');
-    });
+  login(): void {
+    const user = this.userService.validateLogin(this.username, this.password);
+    if (user) {
+      sessionStorage.setItem('user', JSON.stringify(user)); // Store the logged-in user
+      this.router.navigate(['/dashboard']); // Redirect to dashboard
+    } else {
+      alert('Invalid username or password');
+    }
   }
 
-  signUp() {
-    this.userService.signUp({
-      username: this.signupUsername,
-      email: this.signupEmail,
-      password: this.signupPassword,
-    }).subscribe((response: any) => {
-      if (response) {
-        alert('Sign-up successful! You can now log in.');
-        this.router.navigate(['/login']);
-      } else {
-        alert('Error signing up');
-      }
-    }, error => {
-      console.error('Sign-up failed', error);
-      alert('Error signing up. Please try again.');
-    });
+  isLoggedIn(): boolean {
+    return !!sessionStorage.getItem('user');
   }
 }

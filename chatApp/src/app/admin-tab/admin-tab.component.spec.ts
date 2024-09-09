@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AdminTabComponent.Component } from './admin-tab.component';
+import { AdminTabComponent } from './admin-tab.component';
 
-describe('AdminPanelComponent', () => {
-  let component: AdminPanelComponent;
-  let fixture: ComponentFixture<AdminPanelComponent>;
+describe('AdminTabComponent', () => {
+  let component: AdminTabComponent;
+  let fixture: ComponentFixture<AdminTabComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AdminPanelComponent]
+      declarations: [AdminTabComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AdminPanelComponent);
+    fixture = TestBed.createComponent(AdminTabComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -20,4 +20,6 @@ describe('AdminPanelComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  // Additional test cases can be added here as needed
 });
