@@ -2,19 +2,19 @@
   <mat-sidenav mode="side" opened class="sidenav">
     <mat-toolbar>Menu</mat-toolbar>
     <mat-nav-list>
-      <mat-list-item *ngIf="isLoggedIn()">
+      <mat-list-item>
         <mat-icon>dashboard</mat-icon>
         <a mat-line routerLink="/dashboard">Dashboard</a>
       </mat-list-item>
-      <mat-list-item *ngIf="isLoggedIn()">
+      <mat-list-item>
         <mat-icon>admin_panel_settings</mat-icon>
         <a mat-line routerLink="/admin-tab">Admin Tab</a>
       </mat-list-item>
-      <mat-list-item *ngIf="isLoggedIn()">
+      <mat-list-item>
         <mat-icon>account_circle</mat-icon>
         <a mat-line routerLink="/profile">Profile</a>
       </mat-list-item>
-      <mat-list-item *ngIf="!isLoggedIn()">
+      <mat-list-item>
         <mat-icon>login</mat-icon>
         <a mat-line routerLink="/login">Login Tab</a>
       </mat-list-item>
@@ -23,9 +23,7 @@
 
   <mat-sidenav-content>
     <mat-toolbar>
-      <span>Chat Application</span>
-      <span *ngIf="isLoggedIn()" style="margin-left: auto">Hello, {{ loggedInUser }}</span>
-      <button *ngIf="isLoggedIn()" mat-button (click)="logout()">Logout</button>
+      <span>App Title</span>
     </mat-toolbar>
     <div class="content">
       <router-outlet></router-outlet>

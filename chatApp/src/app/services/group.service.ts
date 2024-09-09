@@ -18,7 +18,7 @@ export class GroupService {
     }
   ];
 
-  private currentUser = 'user1';  // Example logged-in user
+  private currentUser = 'user1';  
 
   getGroupDetailsById(groupId: string) {
     return this.groups.find(group => group.id === groupId);

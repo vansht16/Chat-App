@@ -4,8 +4,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
-import { AdminTabComponent } from './admin-tab/admin-tab.component';  // Ensure the correct path
-import { NavigationComponent } from './navigation/navigation.component';  // Ensure the correct path
+import { AdminTabComponent } from './admin-tab/admin-tab.component';  
+import { NavigationComponent } from './navigation/navigation.component';  
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
@@ -19,25 +19,25 @@ import { GroupChatComponent } from './group-chat/group-chat.component';
 @NgModule({
   declarations: [
     AppComponent,
-    AdminTabComponent,  // Ensure the correct component is declared
-    NavigationComponent,  // Ensure the correct component is declared
+    AdminTabComponent,  
+    NavigationComponent,  
     DashboardComponent,
     GroupChatComponent,
     LoginComponent,
     ProfileComponent
   ],
   imports: [
-    BrowserAnimationsModule,
-    MatSidenavModule,
-    MatListModule,
-    MatIconModule,
-    MatToolbarModule,
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    HttpClientModule
+    BrowserAnimationsModule,  
+    MatSidenavModule,  
+    MatListModule,     
+    MatIconModule,     
+    MatToolbarModule,  
+    BrowserModule,     
+    AppRoutingModule,  
+    FormsModule,       
+    HttpClientModule   
   ],
-  providers: [],
+  providers: [],  
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -14,7 +14,7 @@ function createGroup(groupName, adminId) {
 
 class Group {
   users = [];
-  admins = [superAdmin.id]; //super admin is admin by default
+  admins = [superAdmin.id]; 
   channels = ["Main", "Announcements"];
 
   constructor(id, name) {
@@ -28,8 +28,8 @@ class Group {
 
   addUser(userId) {
     if (!this.users.includes(userId)) {
-      this.users.push(userId); //add user to group
-      users.at(userId - 1).groups.push(this.id); //add group to user
+      this.users.push(userId); 
+      users.at(userId - 1).groups.push(this.id); 
     }
   }
 }
@@ -38,7 +38,7 @@ createGroup("Fitness");
 createGroup("Meditation");
 createGroup("Programming");
 
-groups.forEach((group) => group.addUser(superAdmin.id)); //add super admin to all groups
+groups.forEach((group) => group.addUser(superAdmin.id)); 
 
 groups[0].addUser(2);
 groups[1].addUser(2);

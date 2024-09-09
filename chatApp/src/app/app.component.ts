@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Navigate according to login status
+    
     this.userService.loggedIn$.subscribe((isLoggedIn) => {
       if (isLoggedIn) {
         this.router.navigateByUrl('/dashboard');
@@ -30,18 +30,18 @@ export class AppComponent implements OnInit {
       }
     });
 
-    // Track logged-in user data
+   
     this.userService.user$.subscribe((user) => {
       this.loggedInUser = user ? user.username : null;
     });
   }
 
   isLoggedIn(): boolean {
-    return this.userService.isLoggedIn(); // Check if user is logged in
+    return this.userService.isLoggedIn(); 
   }
 
   logout() {
-    this.userService.logout(); // Perform logout
+    this.userService.logout(); 
     this.router.navigateByUrl('/login');
   }
 }
