@@ -1,43 +1,45 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { AppRoutingModule } from './app-routing.module';
-import { FormsModule } from '@angular/forms';
-import { AppComponent } from './app.component';
-import { AdminTabComponent } from './admin-tab/admin-tab.component';  
-import { NavigationComponent } from './navigation/navigation.component';  
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { LoginComponent } from './login/login.component';
-import { ProfileComponent } from './profile/profile.component';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { FormsModule } from '@angular/forms';  // Only one import here
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
+
+// Angular Material modules
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatButtonModule } from '@angular/material/button';  // Optional: If you use Material buttons
+
+// Routing and Components
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { AdminTabComponent } from './admin-tab/admin-tab.component';
+import { ProfileComponent } from './profile/profile.component';
+import { LoginComponent } from './login/login.component';
 import { GroupChatComponent } from './group-chat/group-chat.component';
-import { provideHttpClient, withFetch } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent,
-    AdminTabComponent,  
-    NavigationComponent,  
     DashboardComponent,
-    GroupChatComponent,
+    AdminTabComponent,
+    ProfileComponent,
     LoginComponent,
-    ProfileComponent
+    GroupChatComponent
   ],
   imports: [
-    BrowserAnimationsModule,
-    MatSidenavModule,
-    MatListModule,
-    MatIconModule,
-    MatToolbarModule,
     BrowserModule,
+    BrowserAnimationsModule,
+    FormsModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatListModule,
+    MatButtonModule,
     AppRoutingModule,
-    FormsModule
-  ],
-  providers: [
-    provideHttpClient(withFetch())  // Enable fetch API
+    HttpClientModule
   ],
   bootstrap: [AppComponent]
 })

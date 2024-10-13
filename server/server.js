@@ -1,157 +1,99 @@
 const express = require("express");
-const app = express();
+const path = require("path");
+const formidable = require("formidable");
 const cors = require("cors");
-const {
-  users,
-  createUser,
-  requests,
-  approveUser,
-  usernameAvailable,
-  groupRequests,
-} = require("./users");
-const { groups, createGroup, groupNameAvailable } = require("./groups");
+const fs = require("fs");
+const jwt = require("jsonwebtoken");
+const app = express(); // Create an instance of Express
+const http = require("http").Server(app); // Create HTTP server
+const PORT = 3000;
+const io = require("socket.io")(http, {
+  cors: {
+    origin: "http://localhost:4200",
+    methods: ["GET", "POST"],
+  },
+});
+const sockets = require("./socket.js"); // Import socket logic
+const mongoose = require("mongoose");
 
-app.use(cors());
+// MongoDB Connection URL and Database Name
+const URL = "mongodb://localhost:27017/chatApp";
+let db;
+
+// Mongoose models (if still needed)
+const User = require('./models/user.model');  // Your MongoDB User model
+const Group = require('./models/group.model'); // Your MongoDB Group model
+
+// Parse URL-encoded bodies and JSON
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+// Serve static files (uploaded images)
+app.use("/images", express.static(path.join(__dirname, "./userimages")));
+app.use("/uploads", express.static(path.join(__dirname, "./uploads")));
 
+// This will allow requests only from the frontend of this application
+var corsOptions = {
+  origin: "http://localhost:4200",
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
-
-app.post("/sign-up", (req, res) => {
-  const { email, username, password } = req.body;
-  console.log(email, password, username);
-  
-  if (
-    !usernameAvailable(users, username) &&
-    !usernameAvailable(requests, username)
-  ) {
-    requests.push({ email, username, password });
-    console.log(requests);
-    res.json({ status: "request sent" });
-  } else res.json({ status: "fail", message: "username already taken" });
-  
-});
-
-app.get("/requests", (req, res) => {
-  res.json(requests);
-});
-
-app.get("/users", (req, res) => {
-  res.json(users);
-});
-
-app.post("/join-group", (req, res) => {
-  const { userId, groupId, groupName, username } = req.body;
-  if (
-    !groupRequests.find((g) => g.userId === userId && g.groupId === groupId)
-  ) {
-    groupRequests.push({ groupName, username, groupId, userId });
-  }
-  
-  res.json({ status: "request sent" });
-});
-
-app.get("/join-group-reqs", (req, res) => {
-  res.json(groupRequests);
-});
-
-app.post("/modify-request", (req, res) => {
-  const { type, req: request } = req.body;
-
-  const idx = requests.findIndex((r) => r.username === request.username);
-  requests.splice(idx, 1);
-  if (type === "approve") {
-    users.push(createUser(request.username, request.password, request.email));
-    console.log(users.at(-1));
-    res.json({ status: "added" });
-  } else res.json({ status: "denied" });
-});
-
-app.post("/modify-group-request", (req, res) => {
-  const {
-    type,
-    request: { userId, groupId },
-  } = req.body;
-  console.log(type, userId, groupId);
-
-  if (type === "approve") {
-    
-    users.find((u) => u.id === userId).groups.push(groupId);
-    
-    groups.find((g) => g.id === groupId).users.push(userId);
-  }
-
-  const idx = groupRequests.findIndex(
-    (g) => g.userId === userId && g.groupId === groupId
-  );
-
-  groupRequests.splice(idx, 1);
-
-  res.json({ status: "progress" });
-});
-
-
-app.post("/login", (req, res) => {
+// Login Route using user.json
+app.post("/api/login", (req, res) => {
   const { username, password } = req.body;
 
-  const user = users.find(
-    (user) => username === user.username && password === user.password
-  );
+  // Read the user.json file
+  fs.readFile(path.join(__dirname, './data/user.json'), 'utf8', (err, data) => {
+    if (err) {
+      return res.status(500).json({ message: "Error reading user data" });
+    }
 
-  if (!user) return res.json({ valid: false });
-  res.json({ valid: true, user });
+    // Parse the JSON data
+    const users = JSON.parse(data);
+
+    // Find the user by username
+    const user = users.find(u => u.username === username);
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    // Compare the plain-text password (this can be changed to hashed password later)
+    if (user.password !== password) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+
+    // If the password is correct, generate a JWT token
+    const token = jwt.sign({ userId: user.id }, 'your-secret-key', { expiresIn: '1h' });
+
+    res.status(200).json({ message: "Login successful", token });
+  });
 });
 
+// Main function to connect to MongoDB and set up the Express server
+async function main() {
+  try {
+    await mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true });
+    db = mongoose.connection;
+    console.log("Connected successfully to MongoDB");
 
-app.get("/groups", (req, res) => {
-  res.json(groups);
-});
+    // Initialize Socket.IO
+    const channelsCollection = db.collection("channels");
+    const chatHistoryCollection = db.collection("chatHistory");
 
+    sockets.connect(io, chatHistoryCollection);  // Use socket logic for chats
 
-app.post("/create-group", (req, res) => {
-  const { name, userId: adminId } = req.body;
+    // Start the server using http
+    http.listen(PORT, () => {
+      console.log(`Server started on http://localhost:${PORT}`);
+    });
 
-  if (groupNameAvailable(name)) {
-    createGroup(name, adminId);
-    const user = users.find((user) => user.id === adminId);
-    res.json({ status: "OK", user });
-  } else res.json({ status: "fail" });
-});
-
-app.post("/delete-user", (req, res) => {
-  const { id } = req.body;
-  const { groups: userGroups } = users.find((u) => u.id === id);
-
-  const userIdx = users.findIndex((u) => u.id === id);
-
-  
-  for (const groupId of userGroups) {
-    const group = groups.find((group) => group.id === groupId);
-    const userIdxInGroup = group.users.indexOf(id);
-    group.users.splice(userIdxInGroup, 1);
+  } catch (err) {
+    console.error("Error connecting to MongoDB:", err);
   }
+}
 
-  
-  users.splice(userIdx, 1);
-  res.json({ status: "ok" });
-});
+main(); // Call the main function to connect to MongoDB and start the server
 
-app.post("/remove-user", (req, res) => {
-  const { userId, groupId } = req.body;
-
-  
-  const group = groups.find((group) => group.id === groupId);
-  const userIdxInGroup = group.users.indexOf(userId);
-  group.users.splice(userIdxInGroup, 1);
-
-  
-  const groupIndex = users.at(userId - 1).groups.indexOf(groupId);
-  users.at(userId - 1).groups.splice(groupIndex, 1);
-  res.json({ status: "ok", user: users.at(userId - 1) });
-});
-
-
-
-app.listen(3000, () => {
-  console.log(`Server listening at port 3000`);
-});
+module.exports = app;

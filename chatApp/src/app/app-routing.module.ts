@@ -6,18 +6,17 @@ import { ProfileComponent } from './profile/profile.component';
 import { LoginComponent } from './login/login.component';
 import { GroupChatComponent } from './group-chat/group-chat.component';
 
-
 const routes: Routes = [
+  { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'admin-tab', component: AdminTabComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'group-chat/:groupId', component: GroupChatComponent },
-  { path: 'login', component: LoginComponent },
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' }  
+  { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule]  // Ensure RouterModule is exported
 })
 export class AppRoutingModule { }

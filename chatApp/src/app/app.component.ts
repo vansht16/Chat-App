@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserService } from './services/user.service';
-import { GroupService } from './services/group.service';
 
 @Component({
   selector: 'app-root',
@@ -9,39 +8,32 @@ import { GroupService } from './services/group.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'chatApp';
-  loggedInUser: any;
+  isLoggedIn = false;
 
-  constructor(
-    public router: Router,
-    public userService: UserService,
-    public group: GroupService
-  ) {
-    console.log('app component');
-  }
+  constructor(private router: Router, private userService: UserService) {}
 
   ngOnInit(): void {
-    
-    this.userService.loggedIn$.subscribe((isLoggedIn) => {
-      if (isLoggedIn) {
-        this.router.navigateByUrl('/dashboard');
-      } else {
-        this.router.navigateByUrl('/login');
-      }
+    // Subscribe to the login state from the user service
+    this.userService.loggedIn$.subscribe(isLoggedIn => {
+      this.isLoggedIn = isLoggedIn;
     });
 
-   
-    this.userService.user$.subscribe((user) => {
-      this.loggedInUser = user ? user.username : null;
-    });
+    // Check if running in the browser and if a token exists
+    if (this.isBrowser() && !localStorage.getItem('token')) {
+      this.router.navigate(['/login']);
+    }
   }
 
-  isLoggedIn(): boolean {
-    return this.userService.isLoggedIn(); 
+  // Helper function to check if we are in the browser environment
+  isBrowser(): boolean {
+    return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
   }
 
+  // Method to log out and clear the token
   logout() {
-    this.userService.logout(); 
-    this.router.navigateByUrl('/login');
+    if (this.isBrowser()) {
+      this.userService.logout();
+      this.router.navigate(['/login']);
+    }
   }
 }

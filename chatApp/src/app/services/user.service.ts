@@ -1,45 +1,38 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class UserService {
-  private loggedIn = new BehaviorSubject<boolean>(false);
-  loggedIn$ = this.loggedIn.asObservable();
+  loggedIn$ = new BehaviorSubject<boolean>(false);  // Observable for login status
+  user$ = new BehaviorSubject<any>(null);  // Observable for current user
 
-  private user = new BehaviorSubject<any>(null);
-  user$ = this.user.asObservable();
-
-  constructor(private http: HttpClient) {}
-
-  // Login method with username and password
-  validateLogin(username: string, password: string) {
-    return this.http.post<{ valid: boolean; user: any }>('/api/auth', {
-      username,
-      password,
-    });
+  constructor() {
+    // Check if the environment is browser before accessing localStorage
+    if (this.isBrowser()) {
+      const token = localStorage.getItem('token');
+      this.loggedIn$.next(!!token);
+    }
   }
 
-  // Logout method
+  // Helper function to check if we're in the browser
+  private isBrowser(): boolean {
+    return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
+  }
+
+  // Logout function to reset login state
   logout() {
-    this.user.next(null);
-    this.loggedIn.next(false);
+    if (this.isBrowser()) {
+      localStorage.removeItem('token');  // Only remove token if in the browser
+    }
+    this.loggedIn$.next(false);
+    this.user$.next(null);
   }
 
-  signUp(data: { username: string; email: string; password: string }) {
-    return this.http.post('/api/signup', data);
-  }
-
-  // Public method to set user
+  // Set user info after login
   setUser(user: any) {
-    this.user.next(user); // Store user details
-    this.loggedIn.next(true); // Set logged-in status to true
-  }
-
-  // Check if user is logged in
-  isLoggedIn() {
-    return this.loggedIn.getValue();
+    this.user$.next(user);
+    this.loggedIn$.next(true);
   }
 }
