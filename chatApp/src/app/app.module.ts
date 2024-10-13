@@ -18,6 +18,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AdminTabComponent } from './admin-tab/admin-tab.component';
 import { ProfileComponent } from './profile/profile.component';
 import { LoginComponent } from './login/login.component';
+import { GroupChatComponent } from './group-chat/group-chat.component';
 
 @NgModule({
   declarations: [
